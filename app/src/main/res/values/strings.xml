@@ -1,13 +1,13 @@
 <resources>
     <string name="app_name">InventoryApplication</string>
-    <string name="no_data_available">No data available.</string>
     <string name="action_delete_rows_in_db">Delete all entries</string>
     <string name="action_populate_db">Populate dummy values</string>
-    <string name="label_item_name">Name:</string>
     <string name="submit">Add Item</string>
     <string name="save">save</string>
+    <string name="no_data_available">No data available.</string>
+    <string name="label_item_name">Name:</string>
     <string name="label_quantity_name">Quantity:</string>
-    <string name="label_purchaseDate_name">Purchase Date</string>
-    <string name="label_expirationDate_name">Expiration Date</string>
+    <string name="label_purchaseDate_name">Purchase Date:</string>
+    <string name="label_expirationDate_name">Expiration Date:</string>
     <string name="rows_in_db">No. of rows in the DB: %d</string>
 </resources>
