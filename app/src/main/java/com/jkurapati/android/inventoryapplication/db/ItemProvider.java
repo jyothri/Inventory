@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import static com.jkurapati.android.inventoryapplication.db.ItemContract.ITEMS;
 import static com.jkurapati.android.inventoryapplication.db.ItemContract.ITEM_ID;
 import static com.jkurapati.android.inventoryapplication.db.ItemContract.ItemEntry.TABLE_NAME;
+import static com.jkurapati.android.inventoryapplication.db.ItemContract.uriMatcher;
 
 public class ItemProvider extends ContentProvider {
     private static final String LOG_TAG = ItemProvider.class.getSimpleName();
@@ -46,7 +47,15 @@ public class ItemProvider extends ContentProvider {
     @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
-        return null;
+        final int match = uriMatcher.match(uri);
+        switch (match) {
+            case ITEMS:
+                return ItemContract.ItemEntry.CONTENT_LIST_TYPE;
+            case ITEM_ID:
+                return ItemContract.ItemEntry.CONTENT_ITEM_TYPE;
+            default:
+                throw new IllegalStateException("Unknown URI " + uri + " with match " + match);
+        }
     }
 
     @Nullable
@@ -90,6 +99,17 @@ public class ItemProvider extends ContentProvider {
 
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
-        return 0;
+        final int match = ItemContract.uriMatcher.match(uri);
+        SQLiteDatabase db = inventoryDbHelper.getWritableDatabase();
+        switch (match) {
+            case ITEMS:
+                return db.update(TABLE_NAME, values, selection, selectionArgs);
+            case ITEM_ID:
+                selection = ItemContract.ItemEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                return db.update(TABLE_NAME, values, selection, selectionArgs);
+            default:
+                throw new IllegalArgumentException("Insertion is not supported for " + uri);
+        }
     }
 }
