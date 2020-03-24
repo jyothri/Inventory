@@ -7,6 +7,7 @@ public class Item {
     private String name;
     private int quantity;
     private String expirationDate;
+    private String purchaseDate;
 
     @Override
     public boolean equals(Object o) {
@@ -54,5 +55,13 @@ public class Item {
 
     public void setExpirationDate(String expirationDate) {
         this.expirationDate = expirationDate;
+    }
+
+    public String getPurchaseDate() {
+        return purchaseDate;
+    }
+
+    public void setPurchaseDate(String purchaseDate) {
+        this.purchaseDate = purchaseDate;
     }
 }
