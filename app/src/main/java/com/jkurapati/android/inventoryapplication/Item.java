@@ -9,6 +9,17 @@ public class Item {
     private String expirationDate;
     private String purchaseDate;
 
+    public Item(String name, int quantity, String expirationDate, String purchaseDate) {
+        this.name = name;
+        this.quantity = quantity;
+        this.expirationDate = expirationDate;
+        this.purchaseDate = purchaseDate;
+    }
+
+    public Item() {
+
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
