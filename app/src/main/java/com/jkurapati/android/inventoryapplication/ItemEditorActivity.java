@@ -1,7 +1,7 @@
 package com.jkurapati.android.inventoryapplication;
 
 import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -13,7 +13,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.jkurapati.android.inventoryapplication.db.InventoryDbHelper;
 import com.jkurapati.android.inventoryapplication.db.ItemContract;
 
 import java.util.Locale;
@@ -51,22 +50,20 @@ public class ItemEditorActivity extends AppCompatActivity {
         int quantity = Integer.parseInt(extractFieldValue(R.id.edit_item_quantity_value));
         String purchaseDate = extractFieldValue(R.id.edit_item_purchaseDate_value);
         String expirationDate = extractFieldValue(R.id.edit_item_expirationDate_value);
-        Item itemToSave = new Item(name, quantity, purchaseDate, expirationDate);
 
-        InventoryDbHelper inventoryDbHelper = new InventoryDbHelper(this);
-        SQLiteDatabase db = inventoryDbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(ItemContract.ItemEntry.COLUMN_NAME_NAME, itemToSave.getName());
-        values.put(ItemContract.ItemEntry.COLUMN_NAME_QUANTITY, itemToSave.getQuantity());
-        values.put(ItemContract.ItemEntry.COLUMN_NAME_PURCHASE_DATE, itemToSave.getPurchaseDate());
-        values.put(ItemContract.ItemEntry.COLUMN_NAME_EXPIRATION_DATE, itemToSave.getExpirationDate());
-        long id = db.insert(ItemContract.ItemEntry.TABLE_NAME, null, values);
+        values.put(ItemContract.ItemEntry.COLUMN_NAME_NAME, name);
+        values.put(ItemContract.ItemEntry.COLUMN_NAME_QUANTITY, quantity);
+        values.put(ItemContract.ItemEntry.COLUMN_NAME_PURCHASE_DATE, purchaseDate);
+        values.put(ItemContract.ItemEntry.COLUMN_NAME_EXPIRATION_DATE, expirationDate);
 
-        if (id < 0) {
+        Uri uri = getContentResolver().insert(ItemContract.ItemEntry.CONTENT_URI, values);
+
+        if (uri == null) {
             Toast.makeText(this, "Could not save item", Toast.LENGTH_LONG).show();
             return true;
         } else {
-            Toast.makeText(this, String.format(Locale.getDefault(), "item saved to db %d", id), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, String.format(Locale.getDefault(), "item saved to db %s", uri), Toast.LENGTH_LONG).show();
             return true;
         }
     }

@@ -3,7 +3,6 @@ package com.jkurapati.android.inventoryapplication;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -18,7 +17,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.jkurapati.android.inventoryapplication.db.InventoryDbHelper;
 import com.jkurapati.android.inventoryapplication.db.ItemContract;
 import com.jkurapati.android.inventoryapplication.helper.ItemsAdapter;
 
@@ -30,9 +28,6 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private RecyclerView recyclerView;
-    private TextView emptyView;
-    private RecyclerView.Adapter itemsAdapter;
-    private RecyclerView.LayoutManager layoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,22 +44,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        recyclerView = findViewById(R.id.items_recycler_view);
-        emptyView = findViewById(R.id.empty_view);
-
-        // use a linear layout manager
-        layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-
-
-        List<Item> items = getItems();
-        if (items.isEmpty()) {
-            emptyView.setVisibility(View.VISIBLE);
-            recyclerView.setVisibility(View.GONE);
-        }
-        itemsAdapter = new ItemsAdapter(items);
-        recyclerView.setAdapter(itemsAdapter);
-        displayDatabaseInfo();
+        setupRecyclerView();
 
     }
 
@@ -81,12 +61,10 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "Populating DB with dummy values");
                 populateDatabase();
                 return true;
-
             case R.id.action_delete_rows:
                 Log.d(TAG, "Delete all rows from DB.");
                 deleteAllItems();
                 return true;
-
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
@@ -95,11 +73,25 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private List<Item> getItems() {
+    private void setupRecyclerView() {
+        List<Item> items = getItemsFromProvider();
+        recyclerView = findViewById(R.id.items_recycler_view);
+        if (items.isEmpty()) {
+            recyclerView.setVisibility(View.GONE);
+            TextView emptyView = findViewById(R.id.empty_view);
+            emptyView.setVisibility(View.VISIBLE);
+        } else {
+            // use a linear layout manager
+            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+            recyclerView.setLayoutManager(layoutManager);
+            RecyclerView.Adapter itemsAdapter = new ItemsAdapter(items);
+            recyclerView.setAdapter(itemsAdapter);
+        }
+    }
+
+    private List<Item> getItemsFromProvider() {
         List<Item> items = new ArrayList<>();
-        InventoryDbHelper inventoryDbHelper = new InventoryDbHelper(this);
-        SQLiteDatabase readableDatabase = inventoryDbHelper.getReadableDatabase();
-        Cursor cursor = readableDatabase.rawQuery("SELECT * FROM " + ItemContract.ItemEntry.TABLE_NAME, null);
+        Cursor cursor = getContentResolver().query(ItemContract.ItemEntry.CONTENT_URI, null, null, null);
         try {
             final int nameIdx = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_NAME_NAME);
             final String quantityIdx = ItemContract.ItemEntry.COLUMN_NAME_QUANTITY;
@@ -114,27 +106,11 @@ public class MainActivity extends AppCompatActivity {
             }
         } finally {
             cursor.close();
-            readableDatabase.close();
         }
         return items;
     }
 
-    private void displayDatabaseInfo() {
-        InventoryDbHelper inventoryDbHelper = new InventoryDbHelper(this);
-        SQLiteDatabase readableDatabase = inventoryDbHelper.getReadableDatabase();
-        Cursor cursor = readableDatabase.rawQuery("SELECT * FROM " + ItemContract.ItemEntry.TABLE_NAME, null);
-        try {
-            int count = cursor.getCount();
-            emptyView.setText(getString(R.string.rows_in_db, count));
-        } finally {
-            cursor.close();
-            readableDatabase.close();
-        }
-    }
-
     private void populateDatabase() {
-        InventoryDbHelper inventoryDbHelper = new InventoryDbHelper(this);
-        SQLiteDatabase db = inventoryDbHelper.getWritableDatabase();
         for (int i = 1; i < 11; i++) {
             ContentValues values = new ContentValues();
             Item item = new Item("name: " + i, i, "expiry date: " + i, "purchase date: " + i);
@@ -142,15 +118,13 @@ public class MainActivity extends AppCompatActivity {
             values.put(ItemContract.ItemEntry.COLUMN_NAME_QUANTITY, item.getQuantity());
             values.put(ItemContract.ItemEntry.COLUMN_NAME_PURCHASE_DATE, item.getPurchaseDate());
             values.put(ItemContract.ItemEntry.COLUMN_NAME_EXPIRATION_DATE, item.getExpirationDate());
-            db.insert(ItemContract.ItemEntry.TABLE_NAME, null, values);
+            getContentResolver().insert(ItemContract.ItemEntry.CONTENT_URI, values);
         }
         Toast.makeText(this, "dummy items populated", Toast.LENGTH_LONG).show();
     }
 
     private void deleteAllItems() {
-        InventoryDbHelper inventoryDbHelper = new InventoryDbHelper(this);
-        SQLiteDatabase db = inventoryDbHelper.getWritableDatabase();
-        int rowsDeleted = db.delete(ItemContract.ItemEntry.TABLE_NAME, null, null);
+        int rowsDeleted = getContentResolver().delete(ItemContract.ItemEntry.CONTENT_URI, null, null);
         Toast.makeText(this, String.format(Locale.getDefault(), "items deleted: %d", rowsDeleted), Toast.LENGTH_LONG).show();
     }
 }

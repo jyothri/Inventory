@@ -23,6 +23,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
+
+        <provider
+            android:name=".db.ItemProvider"
+            android:authorities="com.jkurapati.android.inventory"
+            android:exported="false" />
     </application>
 
 </manifest>
