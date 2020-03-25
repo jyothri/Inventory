@@ -1,12 +1,15 @@
 package com.jkurapati.android.inventoryapplication;
 
+import android.app.DatePickerDialog;
 import android.content.ContentUris;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -15,6 +18,8 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.jkurapati.android.inventoryapplication.db.dao.ItemRepository;
 
+import java.text.DateFormat;
+import java.util.Calendar;
 import java.util.Locale;
 
 public class ItemEditorActivity extends AppCompatActivity {
@@ -22,6 +27,7 @@ public class ItemEditorActivity extends AppCompatActivity {
     private ItemRepository itemRepository;
     private boolean isExistingItem;
     private long existingItemId;
+    private EditText eText;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -37,6 +43,7 @@ public class ItemEditorActivity extends AppCompatActivity {
             existingItemId = ContentUris.parseId(uri);
             populateExistingItem();
         }
+        setupListeners();
     }
 
     @Override
@@ -84,16 +91,39 @@ public class ItemEditorActivity extends AppCompatActivity {
             Toast.makeText(this, String.format(Locale.getDefault(), "item updated to db: %s", item.getId()), Toast.LENGTH_LONG).show();
             return true;
         }
+    }
 
+    private void setupListeners() {
+        datePickerDialog(findViewById(R.id.edit_item_expirationDate_value));
+        datePickerDialog(findViewById(R.id.edit_item_purchaseDate_value));
+    }
+
+    private void datePickerDialog(TextView editText) {
+        editText.setInputType(InputType.TYPE_NULL);
+        editText.setOnClickListener(v -> {
+            final Calendar cldr = Calendar.getInstance();
+            int day = cldr.get(Calendar.DAY_OF_MONTH);
+            int month = cldr.get(Calendar.MONTH);
+            int year = cldr.get(Calendar.YEAR);
+            // date picker dialog
+            DatePickerDialog picker = new DatePickerDialog(this,
+                    (view, year1, monthOfYear, dayOfMonth) -> {
+                        final Calendar c = Calendar.getInstance();
+                        c.set(year1, monthOfYear, dayOfMonth);
+                        DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(view.getContext());
+                        editText.setText(dateFormat.format(c.getTime()));
+                    }, year, month, day);
+            picker.show();
+        });
     }
 
     private String getFieldValue(int id) {
-        EditText widgetText = findViewById(id);
+        TextView widgetText = findViewById(id);
         return widgetText.getText().toString().trim();
     }
 
     private void setFieldValue(int id, String valueToSet) {
-        EditText widgetText = findViewById(id);
+        TextView widgetText = findViewById(id);
         widgetText.setText(valueToSet);
     }
 }

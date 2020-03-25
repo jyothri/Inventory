@@ -24,29 +24,29 @@
         app:barrierDirection="end"
         app:constraint_referenced_ids="edit_item_name_label, edit_item_quantity_label, edit_item_purchaseDate_label, edit_item_expirationDate_label" />
 
-        <TextView
-            android:id="@+id/edit_item_name_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/label_item_name"
-            android:labelFor="@id/edit_item_name_value"
-            android:layout_margin="8dp"
-            app:layout_constraintHorizontal_bias="1"
-            app:layout_constraintEnd_toEndOf="@id/barrierVertical"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/barrier1"
-            app:layout_constraintTop_toBottomOf="@id/editor_toolbar" />
+    <TextView
+        android:id="@+id/edit_item_name_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:labelFor="@id/edit_item_name_value"
+        android:text="@string/label_item_name"
+        app:layout_constraintBottom_toTopOf="@id/barrier1"
+        app:layout_constraintEnd_toEndOf="@id/barrierVertical"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editor_toolbar" />
 
-        <EditText
-            android:id="@+id/edit_item_name_value"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:importantForAutofill="no"
-            android:inputType="text"
-            app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toEndOf="@+id/barrierVertical"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/editor_toolbar" />
+    <EditText
+        android:id="@+id/edit_item_name_value"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:importantForAutofill="no"
+        android:inputType="text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@+id/barrierVertical"
+        app:layout_constraintTop_toBottomOf="@id/editor_toolbar" />
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/barrier1"
@@ -56,29 +56,29 @@
         app:barrierDirection="bottom"
         app:constraint_referenced_ids="edit_item_name_label, edit_item_name_value" />
 
-        <TextView
-            android:id="@+id/edit_item_quantity_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/label_quantity_name"
-            android:labelFor="@id/edit_item_quantity_value"
-            android:layout_margin="8dp"
-            app:layout_constraintHorizontal_bias="1"
-            app:layout_constraintBottom_toTopOf="@id/barrier2"
-            app:layout_constraintEnd_toEndOf="@id/barrierVertical"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/barrier1" />
+    <TextView
+        android:id="@+id/edit_item_quantity_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:labelFor="@id/edit_item_quantity_value"
+        android:text="@string/label_quantity_name"
+        app:layout_constraintBottom_toTopOf="@id/barrier2"
+        app:layout_constraintEnd_toEndOf="@id/barrierVertical"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/barrier1" />
 
-        <EditText
-            android:id="@+id/edit_item_quantity_value"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:importantForAutofill="no"
-            android:inputType="numberSigned"
-            app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toEndOf="@+id/barrierVertical"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/barrier1" />
+    <EditText
+        android:id="@+id/edit_item_quantity_value"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:importantForAutofill="no"
+        android:inputType="numberSigned"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@+id/barrierVertical"
+        app:layout_constraintTop_toBottomOf="@id/barrier1" />
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/barrier2"
@@ -88,30 +88,30 @@
         app:barrierDirection="bottom"
         app:constraint_referenced_ids="edit_item_quantity_label, edit_item_quantity_value" />
 
-        <TextView
-            android:id="@+id/edit_item_purchaseDate_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/label_purchaseDate_name"
-            android:labelFor="@id/edit_item_purchaseDate_value"
-            android:layout_margin="8dp"
-            app:layout_constraintHorizontal_bias="1"
-            app:layout_constraintBottom_toTopOf="@id/barrier3"
-            app:layout_constraintEnd_toEndOf="@id/barrierVertical"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/barrier2" />
+    <TextView
+        android:id="@+id/edit_item_purchaseDate_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:labelFor="@id/edit_item_purchaseDate_value"
+        android:text="@string/label_purchaseDate_name"
+        app:layout_constraintBottom_toTopOf="@id/barrier3"
+        app:layout_constraintEnd_toEndOf="@id/barrierVertical"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/barrier2" />
 
-        <EditText
-            android:id="@+id/edit_item_purchaseDate_value"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:importantForAutofill="no"
-            android:inputType="date"
-            android:labelFor="@id/edit_item_purchaseDate_label"
-            app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toEndOf="@+id/barrierVertical"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/barrier2" />
+    <TextView
+        android:id="@+id/edit_item_purchaseDate_value"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Enter Date"
+        android:importantForAutofill="no"
+        android:labelFor="@id/edit_item_purchaseDate_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@+id/barrierVertical"
+        app:layout_constraintTop_toBottomOf="@id/barrier2" />
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/barrier3"
@@ -121,30 +121,30 @@
         app:barrierDirection="bottom"
         app:constraint_referenced_ids="edit_item_purchaseDate_label, edit_item_purchaseDate_value" />
 
-        <TextView
-            android:id="@+id/edit_item_expirationDate_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/label_expirationDate_name"
-            android:labelFor="@id/edit_item_expirationDate_value"
-            android:layout_margin="8dp"
-            app:layout_constraintHorizontal_bias="1"
-            app:layout_constraintBottom_toTopOf="@id/barrier4"
-            app:layout_constraintEnd_toEndOf="@id/barrierVertical"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/barrier3" />
+    <TextView
+        android:id="@+id/edit_item_expirationDate_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:labelFor="@id/edit_item_expirationDate_value"
+        android:text="@string/label_expirationDate_name"
+        app:layout_constraintBottom_toTopOf="@id/barrier4"
+        app:layout_constraintEnd_toEndOf="@id/barrierVertical"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/barrier3" />
 
-        <EditText
-            android:id="@+id/edit_item_expirationDate_value"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:importantForAutofill="no"
-            android:inputType="date"
-            android:labelFor="@id/edit_item_expirationDate_label"
-            app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toEndOf="@+id/barrierVertical"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/barrier3" />
+    <TextView
+        android:id="@+id/edit_item_expirationDate_value"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Enter Date"
+        android:importantForAutofill="no"
+        android:labelFor="@id/edit_item_expirationDate_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@+id/barrierVertical"
+        app:layout_constraintTop_toBottomOf="@id/barrier3" />
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/barrier4"
