@@ -1,12 +1,49 @@
 package com.jkurapati.android.inventoryapplication;
 
+import android.provider.BaseColumns;
+
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import java.util.Objects;
 
+@Entity(tableName = Item.TABLE_NAME)
 public class Item {
-    private int id;
+
+    /**
+     * The name of the Cheese table.
+     */
+    public static final String TABLE_NAME = "item_table";
+
+    /**
+     * The name of the ID column.
+     */
+    public static final String COLUMN_ID = BaseColumns._ID;
+
+    /**
+     * The name of the name column.
+     */
+    public static final String COLUMN_NAME = "name";
+
+    public static final String COLUMN_QUANTITY = "quantity";
+    public static final String COLUMN_EXPIRATION_DATE = "expirationDate";
+    public static final String COLUMN_PURCHASE_DATE = "purchaseDate";
+
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(index = true, name = COLUMN_ID)
+    private long id;
+
+    @ColumnInfo(name = COLUMN_NAME)
     private String name;
+
+    @ColumnInfo(name = COLUMN_QUANTITY)
     private int quantity;
+
+    @ColumnInfo(name = COLUMN_EXPIRATION_DATE)
     private String expirationDate;
+
+    @ColumnInfo(name = COLUMN_PURCHASE_DATE)
     private String purchaseDate;
 
     public Item(String name, int quantity, String expirationDate, String purchaseDate) {
@@ -36,11 +73,11 @@ public class Item {
         return Objects.hash(id, name, quantity, expirationDate);
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

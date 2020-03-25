@@ -10,6 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="2dp"
         android:padding="5dp"
+        style="@style/item_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/list_item_quantity"
         app:layout_constraintTop_toTopOf="parent" />

@@ -1,33 +1,30 @@
 package com.jkurapati.android.inventoryapplication;
 
-import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.jkurapati.android.inventoryapplication.db.ItemContract;
+import com.jkurapati.android.inventoryapplication.db.dao.ItemRepository;
 import com.jkurapati.android.inventoryapplication.helper.ItemsAdapter;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import com.jkurapati.android.inventoryapplication.model.ItemViewModel;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private RecyclerView recyclerView;
+    private ItemViewModel itemViewModel;
+    private ItemRepository itemRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,13 +33,12 @@ public class MainActivity extends AppCompatActivity {
         Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
+        itemRepository = new ItemRepository(getApplication());
+
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, ItemEditorActivity.class);
-                startActivity(intent);
-            }
+        fab.setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, ItemEditorActivity.class);
+            startActivity(intent);
         });
         setupRecyclerView();
 
@@ -69,64 +65,40 @@ public class MainActivity extends AppCompatActivity {
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
-
         }
     }
 
     private void setupRecyclerView() {
-        List<Item> items = getItemsFromProvider();
         recyclerView = findViewById(R.id.items_recycler_view);
-        if (items.isEmpty()) {
-            recyclerView.setVisibility(View.GONE);
-            TextView emptyView = findViewById(R.id.empty_view);
-            emptyView.setVisibility(View.VISIBLE);
-        } else {
-            // use a linear layout manager
-            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-            recyclerView.setLayoutManager(layoutManager);
-            RecyclerView.Adapter itemsAdapter = new ItemsAdapter(items);
-            recyclerView.setAdapter(itemsAdapter);
-        }
-    }
+        // use a linear layout manager
+        final ItemsAdapter itemsAdapter = new ItemsAdapter(this);
+        recyclerView.setAdapter(itemsAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-    private List<Item> getItemsFromProvider() {
-        List<Item> items = new ArrayList<>();
-        Cursor cursor = getContentResolver().query(ItemContract.ItemEntry.CONTENT_URI, null, null, null);
-        try {
-            final int nameIdx = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_NAME_NAME);
-            final int quantityIdx = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_NAME_QUANTITY);
-            final int PurchaseDateIdx = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_NAME_PURCHASE_DATE);
-            final int ExpirationDateIdx = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_NAME_EXPIRATION_DATE);
-            while (cursor.moveToNext()) {
-                final Item item = new Item(cursor.getString(nameIdx),
-                        cursor.getInt(quantityIdx),
-                        cursor.getString(PurchaseDateIdx),
-                        cursor.getString(ExpirationDateIdx
-                        ));
-                item.setId(cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry._ID)));
-                items.add(item);
+        itemViewModel = new ViewModelProvider(this).get(ItemViewModel.class);
+        // Update the cached copy of the words in the adapter.
+        itemViewModel.getItems().observe(this, (items) -> {
+            if (items.isEmpty()) {
+                recyclerView.setVisibility(View.GONE);
+                findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
+            } else {
+                recyclerView.setVisibility(View.VISIBLE);
+                findViewById(R.id.empty_view).setVisibility(View.GONE);
             }
-        } finally {
-            cursor.close();
-        }
-        return items;
+            itemsAdapter.setItems(items);
+        });
     }
 
     private void populateDatabase() {
         for (int i = 1; i < 11; i++) {
-            ContentValues values = new ContentValues();
             Item item = new Item("name: " + i, i, "expiry date: " + i, "purchase date: " + i);
-            values.put(ItemContract.ItemEntry.COLUMN_NAME_NAME, item.getName());
-            values.put(ItemContract.ItemEntry.COLUMN_NAME_QUANTITY, item.getQuantity());
-            values.put(ItemContract.ItemEntry.COLUMN_NAME_PURCHASE_DATE, item.getPurchaseDate());
-            values.put(ItemContract.ItemEntry.COLUMN_NAME_EXPIRATION_DATE, item.getExpirationDate());
-            getContentResolver().insert(ItemContract.ItemEntry.CONTENT_URI, values);
+            itemRepository.insert(item);
         }
         Toast.makeText(this, "dummy items populated", Toast.LENGTH_LONG).show();
     }
 
     private void deleteAllItems() {
-        int rowsDeleted = getContentResolver().delete(ItemContract.ItemEntry.CONTENT_URI, null, null);
-        Toast.makeText(this, String.format(Locale.getDefault(), "items deleted: %d", rowsDeleted), Toast.LENGTH_LONG).show();
+        itemRepository.deleteAll();
+        Toast.makeText(this, "items deleted", Toast.LENGTH_LONG).show();
     }
 }

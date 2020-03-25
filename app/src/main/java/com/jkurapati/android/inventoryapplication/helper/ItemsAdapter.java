@@ -1,6 +1,7 @@
 package com.jkurapati.android.inventoryapplication.helper;
 
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
@@ -21,18 +22,24 @@ import java.util.Locale;
 
 public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ItemViewHolder> {
 
-    private final List<Item> itemsList;
+    private final LayoutInflater mInflater;
+    private List<Item> itemsList;
 
-    public ItemsAdapter(List<Item> itemsList) {
-        this.itemsList = itemsList;
+    public ItemsAdapter(Context context) {
+        mInflater = LayoutInflater.from(context);
         setHasStableIds(true);
+    }
+
+    public void setItems(List<Item> items) {
+        itemsList = items;
+        notifyDataSetChanged();
     }
 
     @NonNull
     @Override
     public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View layout = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_view, parent, false);
-        return new ItemViewHolder(layout);
+        View itemView = mInflater.inflate(R.layout.list_item_view, parent, false);
+        return new ItemViewHolder(itemView);
     }
 
     @Override
@@ -42,33 +49,32 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ItemViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
-        Item item = itemsList.get(position);
-        View layout = holder.view;
-        TextView itemName = layout.findViewById(R.id.list_item_name);
-        itemName.setText(item.getName());
-
-        TextView itemQuantity = layout.findViewById(R.id.list_item_quantity);
-        itemQuantity.setText(String.format(Locale.US, "%d", item.getQuantity()));
-
-        TextView itemExpiryDate = layout.findViewById(R.id.list_item_expiry_date);
-        itemExpiryDate.setText(item.getExpirationDate());
-
+        if (itemsList != null) {
+            Item item = itemsList.get(position);
+            holder.itemNameView.setText(item.getName());
+            holder.itemQuantityView.setText(String.format(Locale.US, "%d", item.getQuantity()));
+            holder.itemExpiryView.setText(item.getExpirationDate());
+        }
     }
 
     @Override
     public int getItemCount() {
-        return itemsList.size();
+        return itemsList == null ? 0 : itemsList.size();
     }
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
-    static class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        final View view;
+    class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        final TextView itemNameView;
+        final TextView itemQuantityView;
+        final TextView itemExpiryView;
 
         ItemViewHolder(View v) {
             super(v);
-            this.view = v;
+            this.itemNameView = v.findViewById(R.id.list_item_name);
+            this.itemQuantityView = v.findViewById(R.id.list_item_quantity);
+            this.itemExpiryView = v.findViewById(R.id.list_item_expiry_date);
             v.setOnClickListener(this);
         }
 
