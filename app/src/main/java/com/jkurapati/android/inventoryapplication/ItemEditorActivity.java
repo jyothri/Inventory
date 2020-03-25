@@ -1,6 +1,7 @@
 package com.jkurapati.android.inventoryapplication;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,6 +27,10 @@ public class ItemEditorActivity extends AppCompatActivity {
         setContentView(R.layout.activity_editor);
         Toolbar myToolbar = findViewById(R.id.editor_toolbar);
         setSupportActionBar(myToolbar);
+        Uri uri = getIntent().getData();
+        if (uri != null) {
+            populateExistingItem(uri);
+        }
     }
 
     @Override
@@ -43,6 +48,24 @@ public class ItemEditorActivity extends AppCompatActivity {
         // If we got here, the user's action was not recognized.
         // Invoke the superclass to handle it.
         return super.onOptionsItemSelected(item);
+    }
+
+    private void populateExistingItem(Uri uri) {
+        Cursor cursor = getContentResolver().query(uri, null, null, null);
+        final int nameIdx = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_NAME_NAME);
+        final int quantityIdx = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_NAME_QUANTITY);
+        final int PurchaseDateIdx = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_NAME_PURCHASE_DATE);
+        final int ExpirationDateIdx = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_NAME_EXPIRATION_DATE);
+        if (cursor.moveToNext()) {
+            EditText name = findViewById(R.id.edit_item_name_value);
+            name.setText(cursor.getString(nameIdx));
+            EditText quantity = findViewById(R.id.edit_item_quantity_value);
+            quantity.setText(cursor.getString(quantityIdx));
+            EditText purchaseDate = findViewById(R.id.edit_item_purchaseDate_value);
+            purchaseDate.setText(cursor.getString(PurchaseDateIdx));
+            EditText expiryDate = findViewById(R.id.edit_item_expirationDate_value);
+            expiryDate.setText(cursor.getString(ExpirationDateIdx));
+        }
     }
 
     private boolean saveItem() {
@@ -67,7 +90,6 @@ public class ItemEditorActivity extends AppCompatActivity {
             return true;
         }
     }
-
 
     private String extractFieldValue(int id) {
         EditText widgetText = findViewById(id);

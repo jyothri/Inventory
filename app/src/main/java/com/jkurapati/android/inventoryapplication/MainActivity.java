@@ -94,15 +94,17 @@ public class MainActivity extends AppCompatActivity {
         Cursor cursor = getContentResolver().query(ItemContract.ItemEntry.CONTENT_URI, null, null, null);
         try {
             final int nameIdx = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_NAME_NAME);
-            final String quantityIdx = ItemContract.ItemEntry.COLUMN_NAME_QUANTITY;
-            final String PurchaseDateIdx = ItemContract.ItemEntry.COLUMN_NAME_PURCHASE_DATE;
-            final String ExpirationDateIdx = ItemContract.ItemEntry.COLUMN_NAME_EXPIRATION_DATE;
+            final int quantityIdx = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_NAME_QUANTITY);
+            final int PurchaseDateIdx = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_NAME_PURCHASE_DATE);
+            final int ExpirationDateIdx = cursor.getColumnIndex(ItemContract.ItemEntry.COLUMN_NAME_EXPIRATION_DATE);
             while (cursor.moveToNext()) {
-                items.add(new Item(cursor.getString(nameIdx),
-                        cursor.getInt(cursor.getColumnIndex(quantityIdx)),
-                        cursor.getString(cursor.getColumnIndex(PurchaseDateIdx)),
-                        cursor.getString(cursor.getColumnIndex(ExpirationDateIdx)
-                        )));
+                final Item item = new Item(cursor.getString(nameIdx),
+                        cursor.getInt(quantityIdx),
+                        cursor.getString(PurchaseDateIdx),
+                        cursor.getString(ExpirationDateIdx
+                        ));
+                item.setId(cursor.getInt(cursor.getColumnIndex(ItemContract.ItemEntry._ID)));
+                items.add(item);
             }
         } finally {
             cursor.close();
