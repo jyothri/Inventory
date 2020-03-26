@@ -1,21 +1,53 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
+        <item name="colorAccent">@color/secondaryColor</item>
+
+        <item name="colorSecondary">@color/secondaryColor</item>
+        <item name="colorOnSecondary">@color/primaryTextColor</item>
+    </style>
+
+    <style name="ToolbarAppTheme" parent="AppTheme">
+        <item name="android:background">@color/primaryColor</item>
+        <item name="android:textColor">@color/primaryTextColor</item>
     </style>
 
     <!-- The default font for RecyclerView items is too small.
     The margin is a simple delimiter between the words. -->
-    <style name="item_title">
+    <style name="item_name">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">28dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textAppearance">@android:style/TextAppearance.Material.Widget.TextView
+        </item>
+    </style>
+
+    <style name="item_quantity">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">28dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textAppearance">@android:style/TextAppearance.Material.Widget.TextView
+        </item>
+    </style>
+
+    <style name="item_expiry_date">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingStart">28dp</item>
+        <item name="android:textAppearance">@android:style/TextAppearance.Material.Small</item>
+    </style>
+
+    <style name="item_view">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_marginBottom">8dp</item>
-        <item name="android:paddingLeft">8dp</item>
-        <item name="android:background">@android:color/holo_orange_light</item>
-        <item name="android:textAppearance">@android:style/TextAppearance.Large</item>
+        <item name="android:layout_height">64dp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:background">@android:color/background_light</item>
+        <item name="android:paddingBottom">16dp</item>
     </style>
 
 </resources>
