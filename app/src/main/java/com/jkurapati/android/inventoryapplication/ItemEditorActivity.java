@@ -82,19 +82,27 @@ public class ItemEditorActivity extends AppCompatActivity {
     }
 
     private boolean saveOrUpdateItem() {
-        String name = getFieldValue(R.id.edit_item_name_value);
-        int quantity = Integer.parseInt(getFieldValue(R.id.edit_item_quantity_value));
-        Item item = new Item(name, quantity, expirationDate, purchaseDate);
-        if (!isExistingItem) {
-            itemRepository.insert(item);
-            Toast.makeText(this, String.format(Locale.getDefault(), "item saved to db: %s", item.getId()), Toast.LENGTH_LONG).show();
+        try {
+            String name = getFieldValue(R.id.edit_item_name_value);
+            int quantity = Integer.parseInt(getFieldValue(R.id.edit_item_quantity_value));
+            Item item = new Item(name, quantity, expirationDate, purchaseDate);
+            if (!isExistingItem) {
+                itemRepository.insert(item);
+                Toast.makeText(this, String.format(Locale.getDefault(), "item saved to db: %s", item.getId()), Toast.LENGTH_SHORT).show();
+            } else {
+                item.setId(existingItemId);
+                itemRepository.updateItem(item);
+                Toast.makeText(this, String.format(Locale.getDefault(), "item updated to db: %s", item.getId()), Toast.LENGTH_SHORT).show();
+            }
             return true;
-        } else {
-            item.setId(existingItemId);
-            itemRepository.updateItem(item);
-            Toast.makeText(this, String.format(Locale.getDefault(), "item updated to db: %s", item.getId()), Toast.LENGTH_LONG).show();
-            return true;
+        } catch (NumberFormatException nfe) {
+            Toast.makeText(this, String.format(Locale.getDefault(), "Invalid Quantity: %s",
+                    nfe.getMessage()), Toast.LENGTH_LONG).show();
+        } catch (IllegalArgumentException ile) {
+            Toast.makeText(this, String.format(Locale.getDefault(), "Could not save item: %s",
+                    ile.getMessage()), Toast.LENGTH_LONG).show();
         }
+        return false;
     }
 
     private void setupListeners() {

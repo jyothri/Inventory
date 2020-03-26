@@ -1,6 +1,7 @@
 package com.jkurapati.android.inventoryapplication.db.dao;
 
 import android.app.Application;
+import android.text.TextUtils;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -50,14 +51,17 @@ public class ItemRepository {
     }
 
     private void validateItem(Item item) {
+        if (TextUtils.isEmpty(item.getName())) {
+            throw new IllegalArgumentException("item name cannot be blank.");
+        }
         int quantity = item.getQuantity();
         if (quantity <= 0) {
-            throw new IllegalArgumentException("Quantity should be a positive integer");
+            throw new IllegalArgumentException("Quantity should be a positive integer.");
         }
         // if purchaseDate is present, validate that it is not after expiry date.
         // if purchaseDate is present, validate that it is not after current date.
         if (item.getExpirationDate().isBefore(item.getPurchaseDate())) {
-            throw new IllegalArgumentException("Purchase date cannot be before Expiration Date");
+            throw new IllegalArgumentException("Purchase date cannot be before Expiration Date.");
         }
 
 //        if (item.getExpirationDate().isBefore(LocalDate.now())) {
