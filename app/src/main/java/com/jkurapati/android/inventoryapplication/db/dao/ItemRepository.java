@@ -36,14 +36,32 @@ public class ItemRepository {
     }
 
     public void insert(Item item) {
+        validateItem(item);
         ItemRoomDatabase.databaseWriteExecutor.execute(() -> itemDao.insert(item));
     }
 
     public void updateItem(Item item) {
+        validateItem(item);
         ItemRoomDatabase.databaseWriteExecutor.execute(() -> itemDao.updateItems(item));
     }
 
     public void deleteAll() {
         ItemRoomDatabase.databaseWriteExecutor.execute(() -> itemDao.deleteAll());
+    }
+
+    private void validateItem(Item item) {
+        int quantity = item.getQuantity();
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Quantity should be a positive integer");
+        }
+        // if purchaseDate is present, validate that it is not after expiry date.
+        // if purchaseDate is present, validate that it is not after current date.
+        if (item.getExpirationDate().isBefore(item.getPurchaseDate())) {
+            throw new IllegalArgumentException("Purchase date cannot be before Expiration Date");
+        }
+
+//        if (item.getExpirationDate().isBefore(LocalDate.now())) {
+//            throw new IllegalArgumentException("Item already expired.");
+//        }
     }
 }
