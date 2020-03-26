@@ -4,11 +4,19 @@ import android.provider.BaseColumns;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 
+import com.jkurapati.android.inventoryapplication.db.dao.LocalDateConverter;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Objects;
 
 @Entity(tableName = Item.TABLE_NAME)
+@TypeConverters(LocalDateConverter.class)
 public class Item {
 
     /**
@@ -24,11 +32,12 @@ public class Item {
     /**
      * The name of the name column.
      */
-    public static final String COLUMN_NAME = "name";
+    static final String COLUMN_NAME = "name";
+    static final String COLUMN_QUANTITY = "quantity";
+    static final String COLUMN_PURCHASE_DATE = "purchaseDate";
 
-    public static final String COLUMN_QUANTITY = "quantity";
     public static final String COLUMN_EXPIRATION_DATE = "expirationDate";
-    public static final String COLUMN_PURCHASE_DATE = "purchaseDate";
+    public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM);
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(index = true, name = COLUMN_ID)
@@ -41,12 +50,13 @@ public class Item {
     private int quantity;
 
     @ColumnInfo(name = COLUMN_EXPIRATION_DATE)
-    private String expirationDate;
+    private LocalDate expirationDate;
 
     @ColumnInfo(name = COLUMN_PURCHASE_DATE)
-    private String purchaseDate;
+    private LocalDate purchaseDate;
 
-    public Item(String name, int quantity, String expirationDate, String purchaseDate) {
+    @Ignore
+    public Item(String name, int quantity, LocalDate expirationDate, LocalDate purchaseDate) {
         this.name = name;
         this.quantity = quantity;
         this.expirationDate = expirationDate;
@@ -97,19 +107,19 @@ public class Item {
         this.quantity = quantity;
     }
 
-    public String getExpirationDate() {
+    public LocalDate getExpirationDate() {
         return expirationDate;
     }
 
-    public void setExpirationDate(String expirationDate) {
+    public void setExpirationDate(LocalDate expirationDate) {
         this.expirationDate = expirationDate;
     }
 
-    public String getPurchaseDate() {
+    public LocalDate getPurchaseDate() {
         return purchaseDate;
     }
 
-    public void setPurchaseDate(String purchaseDate) {
+    public void setPurchaseDate(LocalDate purchaseDate) {
         this.purchaseDate = purchaseDate;
     }
 }

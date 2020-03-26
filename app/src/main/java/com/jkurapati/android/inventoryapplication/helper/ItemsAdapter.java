@@ -20,6 +20,8 @@ import com.jkurapati.android.inventoryapplication.db.ItemContract;
 import java.util.List;
 import java.util.Locale;
 
+import static com.jkurapati.android.inventoryapplication.Item.DATE_FORMATTER;
+
 public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ItemViewHolder> {
 
     private final LayoutInflater mInflater;
@@ -53,7 +55,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ItemViewHold
             Item item = itemsList.get(position);
             holder.itemNameView.setText(item.getName());
             holder.itemQuantityView.setText(String.format(Locale.US, "%d", item.getQuantity()));
-            holder.itemExpiryView.setText(item.getExpirationDate());
+            holder.itemExpiryView.setText(item.getExpirationDate().format(DATE_FORMATTER));
         }
     }
 

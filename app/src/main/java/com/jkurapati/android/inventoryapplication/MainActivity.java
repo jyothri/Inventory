@@ -19,6 +19,13 @@ import com.jkurapati.android.inventoryapplication.db.dao.ItemRepository;
 import com.jkurapati.android.inventoryapplication.helper.ItemsAdapter;
 import com.jkurapati.android.inventoryapplication.model.ItemViewModel;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -90,8 +97,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void populateDatabase() {
-        for (int i = 1; i < 11; i++) {
-            Item item = new Item("name: " + i, i, "expiry date: " + i, "purchase date: " + i);
+        String[] items = new String[]{
+                "spinach", "cauliflower", "broccoli", "apple", "banana", "watermelon", "pineapple",
+                "thotakura", "milk", "cheese", "curd", "gongura", "chicken", "mutton",
+                "curry leaves", "coriander seeds", "cilantro", "onion", "tomato", "rice", "flour",
+                "beerakayi", "kakarakayi", "sorakayi", "curry powder", "chicken masala powder"
+        };
+
+        int[] expiryDates = new int[]{-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5};
+        int[] purchaseDates = new int[]{-35, -24, -31, -22, -11, 0, -1, -2, -3, -4, -5};
+
+        int[] quantities = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 1, 2};
+
+        List<String> itemList = Arrays.asList(items);
+        Collections.shuffle(itemList);
+
+        List<LocalDate> purchaseDatesList = Arrays.stream(purchaseDates).mapToObj(i -> LocalDate.now().plus(i, ChronoUnit.DAYS)).collect(Collectors.toList());
+        Collections.shuffle(purchaseDatesList);
+
+        List<LocalDate> expiryDatesList = Arrays.stream(expiryDates).mapToObj(i -> LocalDate.now().plus(i, ChronoUnit.DAYS)).collect(Collectors.toList());
+        Collections.shuffle(expiryDatesList);
+
+        List<Integer> qtyList = Arrays.stream(quantities).boxed().collect(Collectors.toList());
+        Collections.shuffle(qtyList);
+
+        for (int i = 1; i < 40; i++) {
+            Item item = new Item(getModItem(itemList, i), getModItem(qtyList, i), getModItem(expiryDatesList, i), getModItem(purchaseDatesList, i));
             itemRepository.insert(item);
         }
         Toast.makeText(this, "dummy items populated", Toast.LENGTH_LONG).show();
@@ -100,5 +131,11 @@ public class MainActivity extends AppCompatActivity {
     private void deleteAllItems() {
         itemRepository.deleteAll();
         Toast.makeText(this, "items deleted", Toast.LENGTH_LONG).show();
+    }
+
+    private static <V> V getModItem(List<V> itemList, int i) {
+        int size = itemList.size();
+        i = i % size;
+        return itemList.get(i);
     }
 }

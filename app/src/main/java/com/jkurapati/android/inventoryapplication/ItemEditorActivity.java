@@ -8,7 +8,6 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,22 +17,26 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.jkurapati.android.inventoryapplication.db.dao.ItemRepository;
 
-import java.text.DateFormat;
-import java.util.Calendar;
+import java.time.LocalDate;
 import java.util.Locale;
+
+import static com.jkurapati.android.inventoryapplication.Item.DATE_FORMATTER;
 
 public class ItemEditorActivity extends AppCompatActivity {
     private static final String TAG = ItemEditorActivity.class.getSimpleName();
     private ItemRepository itemRepository;
     private boolean isExistingItem;
     private long existingItemId;
-    private EditText eText;
+    private LocalDate purchaseDate;
+    private LocalDate expirationDate;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         itemRepository = new ItemRepository(getApplication());
         isExistingItem = false;
+        purchaseDate = LocalDate.now();
+        expirationDate = LocalDate.now();
         setContentView(R.layout.activity_editor);
         Toolbar myToolbar = findViewById(R.id.editor_toolbar);
         setSupportActionBar(myToolbar);
@@ -70,16 +73,17 @@ public class ItemEditorActivity extends AppCompatActivity {
         itemRepository.getItemById(existingItemId).observe(this, item -> {
             setFieldValue(R.id.edit_item_name_value, item.getName());
             setFieldValue(R.id.edit_item_quantity_value, String.valueOf(item.getQuantity()));
-            setFieldValue(R.id.edit_item_purchaseDate_value, item.getPurchaseDate());
-            setFieldValue(R.id.edit_item_expirationDate_value, item.getExpirationDate());
+            setFieldValue(R.id.edit_item_purchaseDate_value, item.getPurchaseDate().format(DATE_FORMATTER));
+            setFieldValue(R.id.edit_item_expirationDate_value, item.getExpirationDate().format(DATE_FORMATTER));
+            expirationDate = item.getExpirationDate();
+            purchaseDate = item.getPurchaseDate();
         });
+
     }
 
     private boolean saveOrUpdateItem() {
         String name = getFieldValue(R.id.edit_item_name_value);
         int quantity = Integer.parseInt(getFieldValue(R.id.edit_item_quantity_value));
-        String purchaseDate = getFieldValue(R.id.edit_item_purchaseDate_value);
-        String expirationDate = getFieldValue(R.id.edit_item_expirationDate_value);
         Item item = new Item(name, quantity, expirationDate, purchaseDate);
         if (!isExistingItem) {
             itemRepository.insert(item);
@@ -101,20 +105,41 @@ public class ItemEditorActivity extends AppCompatActivity {
     private void datePickerDialog(TextView editText) {
         editText.setInputType(InputType.TYPE_NULL);
         editText.setOnClickListener(v -> {
-            final Calendar cldr = Calendar.getInstance();
-            int day = cldr.get(Calendar.DAY_OF_MONTH);
-            int month = cldr.get(Calendar.MONTH);
-            int year = cldr.get(Calendar.YEAR);
+            LocalDate localDate;
+            switch (editText.getId()) {
+                case R.id.edit_item_expirationDate_value:
+                    localDate = expirationDate;
+                    break;
+                case R.id.edit_item_purchaseDate_value:
+                    localDate = purchaseDate;
+                    break;
+                default:
+                    throw new IllegalStateException("No implementation for field to set local date.");
+            }
+            int day = localDate.getDayOfMonth();
+            int month = localDate.getMonthValue() - 1;
+            int year = localDate.getYear();
             // date picker dialog
             DatePickerDialog picker = new DatePickerDialog(this,
-                    (view, year1, monthOfYear, dayOfMonth) -> {
-                        final Calendar c = Calendar.getInstance();
-                        c.set(year1, monthOfYear, dayOfMonth);
-                        DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(view.getContext());
-                        editText.setText(dateFormat.format(c.getTime()));
-                    }, year, month, day);
+                    (view, year1, monthOfYear, dayOfMonth) -> setupDateDialog(editText, year1, monthOfYear, dayOfMonth), year, month, day);
             picker.show();
         });
+    }
+
+    private void setupDateDialog(TextView editText, int year1, int monthOfYear, int dayOfMonth) {
+        final LocalDate vlocalDate = LocalDate.of(year1, monthOfYear + 1, dayOfMonth);
+        String formattedDate = vlocalDate.format(DATE_FORMATTER);
+        editText.setText(formattedDate);
+        switch (editText.getId()) {
+            case R.id.edit_item_expirationDate_value:
+                expirationDate = vlocalDate;
+                break;
+            case R.id.edit_item_purchaseDate_value:
+                purchaseDate = vlocalDate;
+                break;
+            default:
+                throw new IllegalStateException("No implementation for field to set local date.");
+        }
     }
 
     private String getFieldValue(int id) {
