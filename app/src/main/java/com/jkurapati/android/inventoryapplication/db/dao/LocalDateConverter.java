@@ -7,7 +7,7 @@ import java.time.LocalDate;
 public class LocalDateConverter {
 
     @TypeConverter
-    static LocalDate toDate(String dateString) {
+    public static LocalDate toDate(String dateString) {
         if (dateString == null) {
             return null;
         } else {
@@ -16,7 +16,7 @@ public class LocalDateConverter {
     }
 
     @TypeConverter
-    static String toDateString(LocalDate date) {
+    public static String toDateString(LocalDate date) {
         if (date == null) {
             return null;
         } else {
